@@ -24,7 +24,7 @@ public class Advertisement {
     @JoinColumn(name = "photo_id")
     private Photo photo;
 
-    private boolean deleted;
+    private String deleted = "false";
 
     public Advertisement() {}
 
@@ -93,11 +93,11 @@ public class Advertisement {
         this.photo = photo;
     }
 
-    public boolean isDeleted() {
+    public String getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void setDeleted(String deleted) {
         this.deleted = deleted;
     }
 }

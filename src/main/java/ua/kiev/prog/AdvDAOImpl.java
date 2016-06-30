@@ -34,12 +34,16 @@ public class AdvDAOImpl implements AdvDAO {
 
     @Override
     public void add(Advertisement adv) {
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.getTransaction();
         try {
-            entityManager.getTransaction().begin();
-            entityManager.persist(adv);
-            entityManager.getTransaction().commit();
+            transaction.begin();
+            session.merge(adv);
+            transaction.commit();
+            session.close();
         } catch (Exception ex) {
-            entityManager.getTransaction().rollback();
+            transaction.rollback();
+            session.close();
             ex.printStackTrace();
         }
     }
@@ -59,8 +63,9 @@ public class AdvDAOImpl implements AdvDAO {
 
     @Override
     public byte[] getPhoto(long id) {
+        Session session = sessionFactory.openSession();
         try {
-            Photo photo = entityManager.find(Photo.class, id);
+            Photo photo = (Photo) session.get(Photo.class, id);
             return photo.getBody();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -74,9 +79,9 @@ public class AdvDAOImpl implements AdvDAO {
         try {
             Criteria criteria = session.createCriteria(Advertisement.class);
             if (deleted) {
-                criteria.add(Restrictions.eq("deleted", true));
+                criteria.add(Restrictions.eq("deleted", "true"));
             } else {
-                criteria.add(Restrictions.ne("deleted", true));
+                criteria.add(Restrictions.eq("deleted", "false"));
             }
             List<Advertisement> result = criteria.list();
             session.close();
@@ -94,7 +99,7 @@ public class AdvDAOImpl implements AdvDAO {
         Transaction transaction = session.getTransaction();
         try {
             Advertisement entity = (Advertisement) session.get(Advertisement.class, id);
-            entity.setDeleted(true);
+            entity.setDeleted("true");
             transaction.begin();
             session.merge(entity);
             transaction.commit();
