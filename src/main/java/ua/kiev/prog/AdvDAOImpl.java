@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AdvDAOImpl implements AdvDAO {
@@ -20,44 +21,57 @@ public class AdvDAOImpl implements AdvDAO {
     private SessionFactory sessionFactory;
 
     @Override
-    public List<Advertisement> list() {
-        Query query = entityManager.createQuery("SELECT a FROM Advertisement a", Advertisement.class);
-        return (List<Advertisement>) query.getResultList();
-    }
-
-    @Override
     public List<Advertisement> list(String pattern) {
-        Query query = entityManager.createQuery("SELECT a FROM Advertisement a WHERE a.shortDesc LIKE :pattern", Advertisement.class);
-        query.setParameter("pattern", "%" + pattern + "%");
-        return (List<Advertisement>) query.getResultList();
-    }
-
-    @Override
-    public void add(Advertisement adv) {
         Session session = sessionFactory.openSession();
-        Transaction transaction = session.getTransaction();
         try {
-            transaction.begin();
-            session.merge(adv);
-            transaction.commit();
+            Criteria criteria = session.createCriteria(Advertisement.class);
+            criteria.add(Restrictions.like("shortDesc", "%" + pattern + "%"));
+            List<Advertisement> result = criteria.list();
             session.close();
-        } catch (Exception ex) {
-            transaction.rollback();
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
             session.close();
-            ex.printStackTrace();
+            return null;
         }
     }
 
     @Override
-    public void delete(long id) {
+    public boolean add(Advertisement...adv) {
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.getTransaction();
         try {
-            entityManager.getTransaction().begin();
-            Advertisement adv = entityManager.find(Advertisement.class, id);
-            entityManager.remove(adv);
-            entityManager.getTransaction().commit();
+            transaction.begin();
+            for (Advertisement advertisement : adv) {
+                session.merge(advertisement);
+            }
+            transaction.commit();
+            session.close();
+            return true;
         } catch (Exception ex) {
-            entityManager.getTransaction().rollback();
             ex.printStackTrace();
+            transaction.rollback();
+            session.close();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean delete(long id) {
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.getTransaction();
+        try {
+            transaction.begin();
+            Advertisement entity = (Advertisement) session.get(Advertisement.class, id);
+            session.delete(entity);
+            transaction.commit();
+            session.close();
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            transaction.rollback();
+            session.close();
+            return false;
         }
     }
 
@@ -78,11 +92,7 @@ public class AdvDAOImpl implements AdvDAO {
         Session session = sessionFactory.openSession();
         try {
             Criteria criteria = session.createCriteria(Advertisement.class);
-            if (deleted) {
-                criteria.add(Restrictions.eq("deleted", "true"));
-            } else {
-                criteria.add(Restrictions.eq("deleted", "false"));
-            }
+            criteria.add(Restrictions.eq("deleted", deleted));
             List<Advertisement> result = criteria.list();
             session.close();
             return result;
@@ -94,14 +104,46 @@ public class AdvDAOImpl implements AdvDAO {
     }
 
     @Override
-    public boolean deleteToBacket(long id) {
+    public boolean deleteToBacket(long...ids) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.getTransaction();
         try {
-            Advertisement entity = (Advertisement) session.get(Advertisement.class, id);
-            entity.setDeleted("true");
+            ArrayList<Advertisement> ads = new ArrayList<>();
+            for (long id : ids) {
+                Advertisement entity = (Advertisement) session.get(Advertisement.class, id);
+                entity.setDeleted(true);
+                ads.add(entity);
+            }
             transaction.begin();
-            session.merge(entity);
+            for (Advertisement ad : ads) {
+                session.merge(ad);
+            }
+            transaction.commit();
+            session.close();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            transaction.rollback();
+            session.close();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean restoreFromBacket(long...ids) {
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.getTransaction();
+        try {
+            ArrayList<Advertisement> ads = new ArrayList<>();
+            for (long id : ids) {
+                Advertisement entity = (Advertisement) session.get(Advertisement.class, id);
+                entity.setDeleted(false);
+                ads.add(entity);
+            }
+            transaction.begin();
+            for (Advertisement ad : ads) {
+                session.merge(ad);
+            }
             transaction.commit();
             session.close();
             return true;

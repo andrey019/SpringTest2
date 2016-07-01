@@ -10,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/")
@@ -20,8 +21,15 @@ public class MainController {
 
 	@RequestMapping("/")
 	public ModelAndView listAdvs() {
-		return new ModelAndView("index", "advs", advDAO.getAll(false));
+        AdsModel adsModel = new AdsModel(advDAO.getAll(false));
+		return new ModelAndView("index", "adsModel", adsModel);
 	}
+
+    @RequestMapping("/backet")
+    public ModelAndView backet() {
+        AdsModel adsModel = new AdsModel(advDAO.getAll(true));
+        return new ModelAndView("backet", "adsModel", adsModel);
+    }
 
 	@RequestMapping(value = "/add_page")
 	public String addPage() {
@@ -30,7 +38,8 @@ public class MainController {
 
 	@RequestMapping(value = "/search", method = RequestMethod.POST)
 	public ModelAndView search(@RequestParam(value="pattern") String pattern) {
-		return new ModelAndView("index", "advs", advDAO.list(pattern));
+        AdsModel adsModel = new AdsModel(advDAO.list(pattern));
+		return new ModelAndView("index", "adsModel", adsModel);
 	}
 
 	@RequestMapping("/delete")
@@ -42,6 +51,44 @@ public class MainController {
             return null;
         }
 	}
+
+    @RequestMapping("/deletechkbox")
+    public String deleteChkbox(@ModelAttribute("adsModel") AdsModel adsModel, HttpServletResponse response) {
+        if ( (adsModel.getIds() != null) && (adsModel.getIds().length != 0) ) {
+            if (advDAO.deleteToBacket(adsModel.getIds())) {
+                return "redirect:/";
+            } else {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return null;
+            }
+        } else {
+            return "redirect:/";
+        }
+    }
+
+    @RequestMapping("/restore")
+	public String restore(@RequestParam(value = "id") long id, HttpServletResponse response) {
+        if (advDAO.restoreFromBacket(id)) {
+            return "redirect:/backet";
+        } else {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return null;
+        }
+    }
+
+    @RequestMapping("/restorechkbox")
+    public String restoreChkbox(@ModelAttribute("adsModel") AdsModel adsModel, HttpServletResponse response) {
+        if ( (adsModel.getIds() != null) && (adsModel.getIds().length != 0) ) {
+            if (advDAO.restoreFromBacket(adsModel.getIds())) {
+                return "redirect:/backet";
+            } else {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return null;
+            }
+        } else {
+            return "redirect:/backet";
+        }
+    }
 
 	@RequestMapping("/image/{file_id}")
 	public void getFile(HttpServletResponse response, @PathVariable("file_id") long fileId) {

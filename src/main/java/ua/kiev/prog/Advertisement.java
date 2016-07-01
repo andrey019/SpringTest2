@@ -7,7 +7,7 @@ import javax.persistence.*;
 public class Advertisement {
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
 
     private String name;
 
@@ -24,7 +24,8 @@ public class Advertisement {
     @JoinColumn(name = "photo_id")
     private Photo photo;
 
-    private String deleted = "false";
+    @Column(nullable = false)
+    private boolean deleted = false;
 
     public Advertisement() {}
 
@@ -37,11 +38,11 @@ public class Advertisement {
         this.photo = photo;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -93,11 +94,11 @@ public class Advertisement {
         this.photo = photo;
     }
 
-    public String getDeleted() {
+    public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(String deleted) {
+    public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
 }
