@@ -8,20 +8,12 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import org.hibernate.cfg.Configuration;
 
 @org.springframework.context.annotation.Configuration
 @ComponentScan("ua.kiev.prog")
 @EnableWebMvc
 public class AppConfig {
-    @Bean
-    public EntityManager entityManager() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("AdvJPA");
-        return emf.createEntityManager();
-    }
 
     @Bean
     public SessionFactory sessionFactory() {

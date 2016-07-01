@@ -15,9 +15,6 @@ import java.util.List;
 public class AdvDAOImpl implements AdvDAO {
 
     @Autowired
-    private EntityManager entityManager;
-
-    @Autowired
     private SessionFactory sessionFactory;
 
     @Override
