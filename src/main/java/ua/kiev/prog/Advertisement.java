@@ -1,23 +1,35 @@
 package ua.kiev.prog;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 
 @Entity
 @Table(name = "Advs")
+@XmlAccessorType(XmlAccessType.NONE)
 public class Advertisement {
     @Id
     @GeneratedValue
+    @XmlAttribute
     private Long id;
 
+    @XmlElement
     private String name;
 
     @Column(name = "short_desc")
+    @XmlElement
     private String shortDesc;
 
     @Column(name = "long_desc")
+    @XmlElement
     private String longDesc;
 
+    @XmlElement
     private String phone;
+
+    @XmlElement
     private double price;
 
     @OneToOne(cascade=CascadeType.ALL)
