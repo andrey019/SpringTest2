@@ -55,6 +55,9 @@
     <form class="form-inline" role="form" action="/add_page" method="post">
         <input type="submit" class="btn btn-default" value="Add new">
     </form>
+    <form class="form-inline" role="form" action="/xml" method="post">
+        <input type="submit" class="btn btn-default" value="Xml list">
+    </form>
 </div>
 </body>
 </body>
