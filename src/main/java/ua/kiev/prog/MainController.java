@@ -21,13 +21,14 @@ public class MainController {
 
 	@RequestMapping("/")
 	public ModelAndView listAdvs() {
-        AdsModel adsModel = new AdsModel(advDAO.getAll(false));
+        AdsModel adsModel = new AdsModel(advDAO.getAll());
 		return new ModelAndView("index", "adsModel", adsModel);
 	}
 
     @RequestMapping("/backet")
     public ModelAndView backet() {
-        AdsModel adsModel = new AdsModel(advDAO.getAll(true));
+        AdsModel adsModel = new AdsModel();
+		adsModel.setAdsDel(advDAO.getDeleted());
         return new ModelAndView("backet", "adsModel", adsModel);
     }
 
@@ -100,6 +101,17 @@ public class MainController {
 			ex.printStackTrace();
 		}
 	}
+
+    @RequestMapping("/imagebacket/{file_id}")
+    public void getFileFromBacket(HttpServletResponse response, @PathVariable("file_id") long fileId) {
+        try {
+            byte[] content = advDAO.getPhotoFromBacket(fileId);
+            response.setContentType("image/png");
+            response.getOutputStream().write(content);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public String addAdv(@RequestParam(value="name") String name,

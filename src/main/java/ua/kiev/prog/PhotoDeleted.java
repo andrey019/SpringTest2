@@ -1,10 +1,11 @@
 package ua.kiev.prog;
 
+
 import javax.persistence.*;
 
 @Entity
-@Table(name="Photos")
-public class Photo {
+@Table(name="Photos_del")
+public class PhotoDeleted {
     @Id
     @GeneratedValue
     private long id;
@@ -13,16 +14,11 @@ public class Photo {
     @Lob
     private byte[] body;
 
-    public Photo() {}
+    public PhotoDeleted() {}
 
-    public Photo(String name, byte[] body) {
-        this.name = name;
-        this.body = body;
-    }
-
-    public Photo(PhotoDeleted photoDeleted) {
-        name = photoDeleted.getName();
-        body = photoDeleted.getBody();
+    public PhotoDeleted(Photo photo) {
+        name = photo.getName();
+        body = photo.getBody();
     }
 
     public long getId() {

@@ -18,7 +18,8 @@
 
         <mapping class="ua.kiev.prog.Photo"/>
         <mapping class="ua.kiev.prog.Advertisement"/>
-
+        <mapping class="ua.kiev.prog.PhotoDeleted"/>
+        <mapping class="ua.kiev.prog.AdvertisementDeleted"/>
 
     </session-factory>
 </hibernate-configuration>

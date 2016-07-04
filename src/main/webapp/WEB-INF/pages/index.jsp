@@ -4,7 +4,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Prog.kiev.ua</title>
+    <title>index</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 </head>
@@ -34,7 +34,7 @@
         </thead>
         <c:forEach items="${adsModel.ads}" var="adv" varStatus="advLoop">
             <tr>
-                <td><img height="40" width="40" src="/image/${adv.photo.id}" /></td>
+                <td><img height="40" src="/image/${adv.photo.id}" /></td>
                 <td>${adv.name}</td>
                 <td>${adv.shortDesc}</td>
                 <td>${adv.longDesc}</td>

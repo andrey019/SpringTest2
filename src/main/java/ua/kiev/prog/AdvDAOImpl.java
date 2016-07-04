@@ -85,12 +85,38 @@ public class AdvDAOImpl implements AdvDAO {
     }
 
     @Override
-    public List<Advertisement> getAll(boolean deleted) {
+    public byte[] getPhotoFromBacket(long id) {
+        Session session = sessionFactory.openSession();
+        try {
+            PhotoDeleted photo = (PhotoDeleted) session.get(PhotoDeleted.class, id);
+            return photo.getBody();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<Advertisement> getAll() {
         Session session = sessionFactory.openSession();
         try {
             Criteria criteria = session.createCriteria(Advertisement.class);
-            criteria.add(Restrictions.eq("deleted", deleted));
             List<Advertisement> result = criteria.list();
+            session.close();
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            session.close();
+            return null;
+        }
+    }
+
+    @Override
+    public List<AdvertisementDeleted> getDeleted() {
+        Session session = sessionFactory.openSession();
+        try {
+            Criteria criteria = session.createCriteria(AdvertisementDeleted.class);
+            List<AdvertisementDeleted> result = criteria.list();
             session.close();
             return result;
         } catch (Exception e) {
@@ -105,15 +131,12 @@ public class AdvDAOImpl implements AdvDAO {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.getTransaction();
         try {
-            ArrayList<Advertisement> ads = new ArrayList<>();
+            transaction.begin();
             for (long id : ids) {
                 Advertisement entity = (Advertisement) session.get(Advertisement.class, id);
-                entity.setDeleted(true);
-                ads.add(entity);
-            }
-            transaction.begin();
-            for (Advertisement ad : ads) {
-                session.merge(ad);
+                AdvertisementDeleted entityDel = new AdvertisementDeleted(entity, new PhotoDeleted(entity.getPhoto()));
+                session.merge(entityDel);
+                session.delete(entity);
             }
             transaction.commit();
             session.close();
@@ -131,15 +154,12 @@ public class AdvDAOImpl implements AdvDAO {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.getTransaction();
         try {
-            ArrayList<Advertisement> ads = new ArrayList<>();
-            for (long id : ids) {
-                Advertisement entity = (Advertisement) session.get(Advertisement.class, id);
-                entity.setDeleted(false);
-                ads.add(entity);
-            }
             transaction.begin();
-            for (Advertisement ad : ads) {
-                session.merge(ad);
+            for (long id : ids) {
+                AdvertisementDeleted entityDel = (AdvertisementDeleted) session.get(AdvertisementDeleted.class, id);
+                Advertisement entity = new Advertisement(entityDel, new Photo(entityDel.getPhoto()));
+                session.merge(entity);
+                session.delete(entityDel);
             }
             transaction.commit();
             session.close();

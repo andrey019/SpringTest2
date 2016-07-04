@@ -4,7 +4,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <body>
 <head>
-    <title>Prog.kiev.ua</title>
+    <title>backet</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 </head>
@@ -27,9 +27,9 @@
             <td><b>Chkbox</b></td>
         </tr>
         </thead>
-        <c:forEach items="${adsModel.ads}" var="adv">
+        <c:forEach items="${adsModel.adsDel}" var="adv">
             <tr>
-                <td><img height="40" width="40" src="/image/${adv.photo.id}" /></td>
+                <td><img height="40" src="/imagebacket/${adv.photo.id}" /></td>
                 <td>${adv.name}</td>
                 <td>${adv.shortDesc}</td>
                 <td>${adv.longDesc}</td>

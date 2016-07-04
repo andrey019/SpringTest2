@@ -7,7 +7,9 @@ public interface AdvDAO {
 	boolean add(Advertisement...adv);
     boolean delete(long id);
     byte[] getPhoto(long id);
-    List<Advertisement> getAll(boolean deleted);
+    byte[] getPhotoFromBacket(long id);
+    List<Advertisement> getAll();
+    List<AdvertisementDeleted> getDeleted();
     boolean deleteToBacket(long...id);
     boolean restoreFromBacket(long...id);
 }

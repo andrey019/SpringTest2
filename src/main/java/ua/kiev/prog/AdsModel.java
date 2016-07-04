@@ -5,6 +5,7 @@ import java.util.List;
 
 public class AdsModel {
     private List<Advertisement> ads;
+    private List<AdvertisementDeleted> adsDel;
     private long[] ids;
 
     public AdsModel() {}
@@ -19,6 +20,14 @@ public class AdsModel {
 
     public void setAds(List<Advertisement> ads) {
         this.ads = ads;
+    }
+
+    public List<AdvertisementDeleted> getAdsDel() {
+        return adsDel;
+    }
+
+    public void setAdsDel(List<AdvertisementDeleted> adsDel) {
+        this.adsDel = adsDel;
     }
 
     public long[] getIds() {
